@@ -380,14 +380,17 @@ func (p *parser) atComma(context string, follow token.Token) bool {
 	if p.tok == token.COMMA {
 		return true
 	}
+
+	if p.tok == token.SEMICOLON && p.lit == "\n" {
+		p.next()
+		return false
+	}
+
 	if p.tok != follow {
-		msg := "missing ','"
-		if p.tok == token.SEMICOLON && p.lit == "\n" {
-			msg += " before newline"
-		}
-		p.error(p.pos, msg+" in "+context)
+		p.error(p.pos, "missing ',' in " + context)
 		return true // "insert" comma and continue
 	}
+
 	return false
 }
 
@@ -1689,9 +1692,11 @@ func (p *parser) parseElementList() (list []ast.Expr) {
 
 	for p.tok != token.RBRACE && p.tok != token.EOF {
 		list = append(list, p.parseElement())
+
 		if !p.atComma("composite literal", token.RBRACE) {
 			break
 		}
+
 		p.next()
 	}
 

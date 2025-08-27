@@ -7,13 +7,27 @@
 
 package p
 
+// Last item should not require a dangling comma.
+// No errors for this case anymore.
 var _ = []int{
-	0/* ERROR AFTER "missing ','" */
+    0
 }
 
 var _ = []int{
-	0,
-	1,
-	2,
-	3/* ERROR AFTER "missing ','" */
+    0,
+    1,
+    2,
+    3
+}
+
+// Dangling commas are still allowed for backward compatibility.
+var _ = []int{
+    0,
+}
+
+var _ = []int{
+    0,
+    1,
+    2,
+    3,
 }
